@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A cute Valentine's Day page to ask someone to be your Valentine!">
+  <meta name="theme-color" content="#ffd0e5">
+  <title>Valentine's Day</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <style>
+  .floating-heart {
+  position: fixed;
+  bottom: -40px;
+  pointer-events: none;
+  animation: floatUp linear infinite;
+  opacity: 0.7;
+  z-index: 0;
+}
+
+@keyframes floatUp {
+  from {
+    transform: translateY(0) scale(1);
+    opacity: 0.8;
+  }
+  to {
+    transform: translateY(-120vh) scale(1.6);
+    opacity: 0;
+  }
+}
+    .gradient-background {
+      background: linear-gradient(180deg, #ffd0e5 0%, #ffe8f2 36%, #ffffff 100%);
+      min-height: 100vh;
+    }
+
+    .bounce {
+      animation: bounce 2s ease infinite;
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+      }
+      40% {
+        transform: translateY(-20px);
+      }
+      60% {
+        transform: translateY(-10px);
+      }
+    }
+  #loveUI {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      overflow: hidden;
+      z-index: 999;
+      font-family: system-ui, -apple-system, "Segoe UI",
+        Roboto, Arial, sans-serif;
+    }
+
+    #loveUI .love {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      margin: -225px 0 0 -225px;
+      --i: 1;
+    }
+
+    #loveUI .love:last-child .love-word {
+      color: #fff;
+      font-size: 2rem;
+      text-shadow: 0 0 10px #ea80b0;
+    }
+
+    #loveUI .love-word {
+      color: #ea80b0;
+      font-size: 1.4rem;
+      transform: translateY(-100%) rotateZ(-30deg);
+      text-shadow: 0 0 10px #fff;
+      letter-spacing: 2px;
+      white-space: nowrap;
+    }
+
+    #loveUI .love-horizontal {
+      animation: horizontal 10000ms infinite alternate ease-in-out;
+      animation-delay: calc(var(--i) * -300ms);
+    }
+
+    #loveUI .love-vertical {
+      animation: vertical 20000ms infinite linear;
+      animation-delay: calc(var(--i) * -300ms);
+    }
+    #heart span {
+  position: absolute;
+  color: hotpink;
+  font-size: 16px;
+  white-space: nowrap;
+  transform: translate(-50%, -50%);
+  text-shadow: 0 0 8px #ff5c8a;
+}
+
+    @keyframes horizontal {
+      from { transform: translateX(0px); }
+      to   { transform: translateX(450px); }
+    }
+
+    @keyframes vertical {
+      0%   { transform: translateY(180px); }
+      10%  { transform: translateY(45px); }
+      15%  { transform: translateY(4.5px); }
+      18%  { transform: translateY(0px); }
+      20%  { transform: translateY(4.5px); }
+      22%  { transform: translateY(34.61538px); }
+      24%  { transform: translateY(64.28571px); }
+      25%  { transform: translateY(112.5px); }
+      26%  { transform: translateY(64.28571px); }
+      28%  { transform: translateY(34.61538px); }
+      30%  { transform: translateY(4.5px); }
+      32%  { transform: translateY(0px); }
+      35%  { transform: translateY(4.5px); }
+      40%  { transform: translateY(45px); }
+      50%  { transform: translateY(180px); }
+      71%  { transform: translateY(428.57143px); }
+      72.5%{ transform: translateY(441.17647px); }
+      75%  { transform: translateY(450px); }
+      77.5%{ transform: translateY(441.17647px); }
+      79%  { transform: translateY(428.57143px); }
+      100% { transform: translateY(180px); }
+    }
+  </style>
+  <!-- Preload images so transitions feel instant -->
+  <link rel="preload" as="image" href="./images/image1.gif">
+  <link rel="preload" as="image" href="./images/image2.gif">
+  <link rel="preload" as="image" href="./images/image3.gif">
+  <link rel="preload" as="image" href="./images/image4.gif">
+  <link rel="preload" as="image" href="./images/image5.gif">
+  <link rel="preload" as="image" href="./images/image6.gif">
+  <link rel="preload" as="image" href="./images/image7.gif">
+</head>
+<body class="gradient-background">
+
+  <div id="valentine-bg"></div>
+  <div id="valentineUI">
+  <main class="flex items-center justify-center h-screen">
+    <section class="flex flex-col items-center p-4">
+      <img
+        id="imageDisplay"
+        src="./images/image1.gif"
+        alt="Cute kitten with flowers"
+        class="rounded-md h-[300px] object-cover"
+      />
+      <h1 id="valentineQuestion" class="text-4xl font-bold italic text-[#bd1e59] my-4">
+        Will you be my Valentine?
+      </h1>
+      <div id="responseButtons" class="flex gap-4 pt-5 items-center">
+        <button
+          id="yesButton"
+          class="bounce inline-flex items-center justify-center whitespace-nowrap rounded-md text-xl font-medium cursor-pointer px-4 py-2 bg-green-500 text-white transition-all duration-300 ease-in-out hover:bg-green-400 min-h-12 min-w-[75px]"
+        >
+          Yes
+        </button>
+        <button
+          id="noButton"
+          class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-xl font-medium cursor-pointer px-4 py-2 bg-red-500 text-white transition-colors hover:bg-red-700 h-12 min-w-[75px]"
+        >
+          No
+        </button>
+      </div>
+    </section>
+  </main>
+  </div>
+ <script>
+
+
+    (() => {
+      // DOM references
+      const yesButton = document.getElementById('yesButton');
+      const noButton = document.getElementById('noButton');
+      const imageDisplay = document.getElementById('imageDisplay');
+      const valentineQuestion = document.getElementById('valentineQuestion');
+      const responseButtons = document.getElementById('responseButtons');
+
+      // Configuration
+      const GROWTH_PER_CLICK = 35;
+      const FONT_GROWTH_PER_CLICK = 25;
+      const MAX_NO_CLICKS = 5;
+
+      const IMAGE_PATHS = [
+        './images/image1.gif',
+        './images/image2.gif',
+        './images/image3.gif',
+        './images/image4.gif',
+        './images/image5.gif',
+        './images/image6.gif',
+        './images/image7.gif',
+      ];
+
+      const NO_BUTTON_MESSAGES = [
+        'No',
+        'Are you sure?',
+        'Pookie please',
+        "Don't do this to me :(",
+        "You're breaking my heart",
+        "I'm gonna cry...",
+      ];
+
+      const ALT_TEXTS = [
+        'Cute kitten with flowers',
+        'Sad kitten looking up',
+        'Kitten begging',
+        'Heartbroken kitten',
+        'Crying kitten',
+        'Devastated kitten',
+        'Happy kitten celebrating',
+      ];
+
+      // State
+      let noClickCount = 0;
+      let buttonHeight = 48;
+      let buttonWidth = 80;
+      let fontSize = 20;
+
+      noButton.addEventListener('click', () => {
+        if (noClickCount >= MAX_NO_CLICKS) return;
+
+        noClickCount++;
+
+        // Update image and alt text
+        imageDisplay.src = IMAGE_PATHS[noClickCount];
+        imageDisplay.alt = ALT_TEXTS[noClickCount];
+
+        // Grow the "Yes" button to make it harder to ignore
+        buttonHeight += GROWTH_PER_CLICK;
+        buttonWidth += GROWTH_PER_CLICK;
+        fontSize += FONT_GROWTH_PER_CLICK;
+
+        yesButton.style.height = `${buttonHeight}px`;
+        yesButton.style.width = `${buttonWidth}px`;
+        yesButton.style.fontSize = `${fontSize}px`;
+
+        // Update "No" button text with increasingly desperate messages
+        noButton.textContent = NO_BUTTON_MESSAGES[noClickCount];
+      });
+
+      yesButton.addEventListener('click', () => {
+        imageDisplay.src = IMAGE_PATHS[IMAGE_PATHS.length - 1];
+        imageDisplay.alt = ALT_TEXTS[ALT_TEXTS.length - 1];
+        valentineQuestion.textContent = 'She said YES 😭💍 , i knew it forever starts now 💋😘💋😘💋😘muaahhhhh ....ILY My better tomorrow ♾️❤️♾️❤️♾️❤️';
+        responseButtons.style.display = 'none';
+        const musicSection = document.getElementById("musicSection");
+        if (musicSection) musicSection.classList.remove("hidden");
+
+        // Heart-shaped confetti for a valentine theme
+        const heart = confetti.shapeFromPath({
+          path: 'M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z',
+        });
+
+        const random = Math.floor(Math.random() * 3);
+
+if (random === 0) {
+  confetti({
+    particleCount: 80,
+    shapes: ["heart"],
+    colors: ["#ff4d6d", "#ff758f"]
+  });
+}
+
+if (random === 1) {
+  confetti({
+    particleCount: 120,
+    shapes: ["star"],
+    colors: ["#ffe066", "#ffd43b"]
+  });
+}
+
+if (random === 2) {
+  confetti({
+    particleCount: 100,
+    emojis: ["💋", "😘", "💞"],
+    scalar: 2
+  });
+}
+
+        const defaults = { spread: 360, ticks: 100, gravity: 0, decay: 0.94, startVelocity: 20, shapes: [heart], colors: ['#ff69b4', '#ff1493', '#ff6b81', '#e84393'] };
+
+        confetti({ ...defaults, particleCount: 50, scalar: 2 });
+        confetti({ ...defaults, particleCount: 25, scalar: 3 });
+        confetti({ ...defaults, particleCount: 10, scalar: 4 });
+      });
+    })();
+  
+      document.addEventListener("DOMContentLoaded", () => {
+    const playBtn = document.getElementById("playMusicBtn");
+    const music = document.getElementById("bgMusic");
+
+    if (!playBtn || !music) return;
+
+    playBtn.addEventListener("click", () => {
+      music.volume = 0.6;
+      music.play();
+      document.getElementById("valentineUI").style.display = "none";
+      document.getElementById("valentine-bg").style.display = "none"; // 🔥 FIX
+      const loveUI = document.getElementById("loveUI");
+      loveUI.classList.remove("hidden");
+
+  startLoveAnimation();
+      playBtn.textContent = "🎶 Playing...";
+    });
+  });
+
+
+
+
+
+  const bg = document.getElementById("valentine-bg");
+  const hearts = ["💖","💗","💘","💝","❤️"];
+
+  const heartInterval = setInterval(() => {
+  const h = document.createElement("div");
+  h.className = "floating-heart";
+  h.innerText = hearts[Math.floor(Math.random() * hearts.length)];
+  h.style.left = Math.random() * 100 + "vw";
+  h.style.fontSize = 16 + Math.random() * 24 + "px";
+  h.style.animationDuration = 6 + Math.random() * 4 + "s";
+  bg.appendChild(h);
+
+  setTimeout(() => h.remove(), 10000);
+}, 400);
+
+  function startLoveAnimation() {
+    const ui = document.getElementById("ui");
+    if (!ui || ui.children.length) return;
+
+    ui.innerHTML = "";
+    const N = 120;
+    for (let i = 1; i <= N; i++) {
+      const love = document.createElement("div");
+      love.className = "love";
+      love.style.setProperty("--i", i);
+
+      const h = document.createElement("div");
+      h.className = "love-horizontal";
+
+      const v = document.createElement("div");
+      v.className = "love-vertical";
+
+      const word = document.createElement("div");
+      word.className = "love-word";
+      word.textContent = "I love you";
+
+      v.appendChild(word);
+      h.appendChild(v);
+      love.appendChild(h);
+      ui.appendChild(love);
+    }
+  }
+  </script>
+
+<div
+  id="musicSection"
+  class="fixed top-4 left-1/2 -translate-x-1/2 text-center hidden z-50"
+>
+  <p class="text-lg italic text-[#bd1e59] mb-2">
+    that's how my life sounds when you are with me 💖
+  </p>
+
+  <button
+    id="playMusicBtn"
+    class="px-5 py-2 rounded-full bg-pink-500 text-white text-lg hover:bg-pink-400 transition shadow-lg"
+  >
+    ▶ Play our song
+  </button>
+</div>
+
+<audio id="bgMusic" preload="auto">
+  <source src="./music/Tum Ho Rockstar 320 Kbps.mp3" type="audio/mpeg">
+</audio>
+
+<div id="loveUI" class="hidden">
+  <div id="ui"></div>
+</div>
+</body>
+</html>
